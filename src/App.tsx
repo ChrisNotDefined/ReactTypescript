@@ -2,13 +2,32 @@ import React from "react";
 import "./App.css";
 import CounterManagement from "./components/CounterManagement";
 
-function App() {
-  return (
+
+interface AppState {
+  change: Boolean
+}
+class App extends React.Component<{}, AppState> {
+
+  constructor(props: {}) {
+    super(props);
+    this.state = {
+      change: true
+    }
+  }
+
+  clickButton = () => {
+    this.setState({change: !this.state.change});
+  }
+
+  render() {
+    return (
     <>
       <h1>My App</h1>
-      <CounterManagement ownerName="Chris"></CounterManagement>
+      {this.state.change && <CounterManagement ownerName="Chris"/>}
+      <button onClick={this.clickButton}>Change</button>
     </>
   );
+  }
 }
 
 export default App;
