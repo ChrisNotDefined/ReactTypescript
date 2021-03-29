@@ -1,7 +1,10 @@
-import React from "react";
-import { CounterManagementProps, CounterManagementState } from "./interface";
 import axios from "axios";
-
+import React from "react";
+import {
+  CounterManagementProps,
+  CounterManagementState,
+  UserDataAPI,
+} from "./interface";
 class CounterManagement extends React.Component<
   CounterManagementProps,
   CounterManagementState
@@ -11,95 +14,63 @@ class CounterManagement extends React.Component<
 
     this.state = {
       counter: 0,
-      users: [],
+      user: 1,
+      userData: {
+        id: 0,
+        email: "",
+        first_name: "",
+        last_name: "",
+        avatar: "",
+      },
     };
-
-    console.log("Constructor");
   }
 
   handleAddClick = () => {
     // Modify based on the state of the last render
-    // this.setState({
-    //   counter: this.state.counter + 1
-    // });
-
-    // Modify based on the last change in the state
-    this.setState((prevState) => {
-      return {
-        counter: prevState.counter + 1,
-      };
-    });
-
-    this.setState(
-      (prevState) => {
-        return {
-          counter: prevState.counter + 1,
-        };
-      },
-      () => {
-        // Callback when the state is changed
-        console.log("Changed state");
-      }
-    );
-
-    this.setState((prevState) => {
-      return {
-        counter: prevState.counter + 1,
-      };
+    this.setState({
+      counter: this.state.counter + 1,
+      user: this.state.user + 1,
     });
   };
 
   handleMinusClick = () => {
     this.setState({
       counter: this.state.counter - 1,
+      user: this.state.user - 1,
     });
   };
 
-  // Use for taking in consideration the props that are passed when setting or updating the state
-  static getDerivedStateFromProps(
-    props: CounterManagementProps,
-    state: CounterManagementState
-  ) {
-    console.log("getDerivedStateFromProps");
-    // return props.ownerName === "Chris" ? { counter: 5 } : null;
-    return null;
-  }
-
-  clickWindow = () => {
-    console.log('Click window occured');
-    this.setState({counter: this.state.counter + 1})
-  }
+  fetchUserData = () => {
+    axios.get(`https://reqres.in/api/users/${this.state.user}`).then((res) => {
+      const userDataAPI = res.data as UserDataAPI;
+      this.setState({ userData: userDataAPI.data });
+    });
+  };
 
   componentDidMount() {
-    console.log("Component Did Mount");
-    axios.get("https://reqres.in/api/users?page=2").then((res) => {
-      const data = res.data;
-
-      const users = data.data.map((userData: any) => userData.first_name);
-
-      this.setState({ users });
-    });
-    window.addEventListener('click', this.clickWindow);
+    this.fetchUserData();
   }
 
-  componentWillUnmount () {
-    window.removeEventListener('click', this.clickWindow);
+  componentDidUpdate(prevProps: CounterManagementProps, prevState: CounterManagementState) {
+    if(prevState.user !== this.state.user){
+      this.fetchUserData();
+    }
   }
 
   render() {
     console.log("render");
     const { ownerName } = this.props;
-    const { counter, users } = this.state;
+    const { counter, user, userData } = this.state;
+    const { first_name } = userData;
     return (
       <div>
         <h1>Counter Manager</h1>
         <h2>Owner Name: {ownerName}</h2>
         <h3> Counter: {counter}</h3>
+        <h3> UserID: {user}</h3>
+        <h3> First Name: {first_name}</h3>
         <button onClick={this.handleAddClick}>Add</button>
         <button onClick={this.handleMinusClick}>Rest</button>
-        <ul>
-          {users.map((user, index) => <li key={index}>{user}</li>)}
-        </ul>
       </div>
     );
   }
