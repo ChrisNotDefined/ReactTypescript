@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import FirstComponent from "./components/FirstComponent";
+import MyPureComponent from "./components/MyPureComponent";
 
 class App extends React.Component {
 
@@ -8,7 +8,7 @@ class App extends React.Component {
     return (
       <>
         <h1>My App</h1>
-        <FirstComponent/>
+        <MyPureComponent/>
       </>
     );
   }
