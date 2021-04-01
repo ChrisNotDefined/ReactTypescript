@@ -1,5 +1,6 @@
 import React from "react";
 import "./App.css";
+import Fruits from "./components/fruits";
 
 class App extends React.Component {
 
@@ -7,6 +8,7 @@ class App extends React.Component {
     return (
       <>
         <h1>My App</h1>
+        <Fruits />
       </>
     );
   }
